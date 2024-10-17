@@ -1,0 +1,113 @@
+import numpy as np
+import pandas as pd
+#feed-forward network
+x = np.array([0.8,0.6,0.7]).reshape(1,-1)
+y = np.array([0,1,0]).reshape(1,-1)
+w1 = np.array([[0.2,0.4,0.1], # Pass a single list of lists to create a 2D array
+[0.5,0.3,0.2],
+[0.3,0.7,0.8]])
+b1 = np.array([0.1,0.2,0.3])
+print(x)
+print(y)
+print(w1)
+print(b1)
+H = np.dot(x,w1)+b1
+print(H)
+def ReLU(x):
+return np.maximum(0, x)
+a1 = ReLU(H)
+print(a1)
+w2 = np.array([[0.6,0.4,0.5],
+[0.1,0.2,0.3],
+[0.3,0.7,0.2]])
+b2 = np.array([0.1,0.2,0.3])
+print(w2)
+print(b2)
+H2 = np.dot(a1,w2)+b2
+print(H2)
+[[0.8 0.6 0.7]]
+[[0 1 0]]
+[[0.2 0.4 0.1]
+ [0.5 0.3 0.2]
+ [0.3 0.7 0.8]]
+[0.1 0.2 0.3]
+[[0.77 1.19 1.06]]
+[[0.77 1.19 1.06]]
+[[0.6 0.4 0.5]
+ [0.1 0.2 0.3]
+ [0.3 0.7 0.2]]
+[0.1 0.2 0.3]
+[[0.999 1.488 1.254]]
+# Define the softmax function
+def softmax(x):
+exp_scores = np.exp(x)
+return exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+a2 = softmax(H2)
+print(a2)
+y_hat = a2
+print(y_hat)
+[[0.25502746 0.41586939 0.32910315]]
+[[0.25502746 0.41586939 0.32910315]]
+#Backpropagation cross entropy
+def cross_entropy(y, y_hat):
+return -np.sum(y * np.log(y_hat))
+loss = cross_entropy(y, y_hat)
+print(loss)
+0.8773840448515435
+7/7/24, 10:03 PM Multiclass_classification_L003.ipynb - Colab
+https://colab.research.google.com/drive/1p-QRyp6eTHU-_9aWRjd4ad7uOkKeSiHH#printMode=true 1/3
+# Hyperparameters
+learning_rate = 0.01
+# Backpropagation
+# Gradient of loss w.r.t. W2
+delta_L_h2 = a2 - y
+grad_W2 = np.dot(a1.T, delta_L_h2)
+print(grad_w1)
+# Gradient of loss w.r.t. W1
+delta_L_h1 = np.dot(delta_L_h2, w2.T)
+grad_W1 = np.dot(x.T, delta_L_h1)
+print(grad_w2)
+# Update weights
+w2 -= learning_rate * grad_w2
+w1 -= learning_rate * grad_w1
+print("\nUpdated W1:")
+print(w1)
+print("Updated W2:")
+print(w2)
+[[ 0.03543597 -0.04305972 -0.25688444]
+ [ 0.02657698 -0.03229479 -0.19266333]
+ [ 0.03100647 -0.03767726 -0.22477388]]
+[[ 0.19637115 -0.44978057 0.25340943]
+ [ 0.30348268 -0.69511543 0.39163275]
+ [ 0.27032911 -0.61917845 0.34884934]]
+Updated W1:
+[[0.1918693 0.40112978 0.13160038]
+ [0.49390197 0.30084734 0.22370029]
+ [0.29288563 0.70098856 0.82765033]]
+Updated W2:
+[[0.57250804 0.46296928 0.46452268]
+ [0.05751242 0.29731616 0.24517141]
+ [0.26215392 0.78668498 0.15116109]]
+#gradient of loss w.r.t b2
+grad_b2 = np.sum(delta_L_h2, axis=0, keepdims=True)
+print(grad_b2)
+#gradient of loss w.r.t b1
+grad_b1 = np.sum(delta_L_h1, axis=0, keepdims=True)
+print(grad_b1)
+# Reshape b2 to match grad_b2 before subtraction
+b2 = b2.reshape(1,-1)
+b1 = b1.reshape(1,-1)
+b2 -= learning_rate * grad_b2
+b1 -= learning_rate * grad_b1
+print("\nUpdated b1:")
+print(b1)
+print("Updated b2:")
+print(b2)
+[[ 0.25502746 -0.58413061 0.32910315]]
+[[ 0.03637079 -0.06607109 -0.33201414]]
+Updated b1:
+[[0.09963629 0.20066071 0.30332014]]
+Updated b2:
+[[0.09489945 0.21168261 0.29341794]]
+7/7/24, 10:03 PM Multiclass_classification_L003.ipynb - Colab
+https://colab.research.google.com/drive/1p-QRyp6eTHU-_9aWRjd4ad7uOkKeSiHH#printMode=true 2/3
