@@ -1,0 +1,74 @@
+#binary classification
+import numpy as np
+def sigmoid (x):
+return 1/(1+np.exp(-x))
+def sigmoid_derivative(x):
+return x*(1-x)
+#Define mean squared error loss function
+def mean_squared_error_loss(y_true, y_pred):
+return np.mean((y_true - y_pred)**2)
+#Define the inputs and expected outputs for XOR
+inputs=np.array([[0,0], [0,1], [1,0], [1,1]])
+outputs=np.array([[0],[1],[1],[0]])
+#Initialize weights and biases randomly
+np.random.seed(42) #For reproducibility
+input_size=2
+hidden_size=2
+output_size=1
+weights_input_hidden=np.random.rand(input_size, hidden_size)
+bias_hidden=np.random.rand(hidden_size)
+weights_hidden_output=np.random.rand(hidden_size, output_size)
+bias_output=np.random.rand(output_size)
+#Training paramaters
+learning_rate=0.1
+epochs=10000
+#Training loop
+for epoch in range(epochs):
+#Forward pass
+hidden_input=np.dot(inputs, weights_input_hidden) + bias_hidden
+hidden_output=sigmoid(hidden_input)
+final_input = np.dot(hidden_output, weights_hidden_output) + bias_output
+final_output = sigmoid(final_input)
+#Compute the loss
+loss = mean_squared_error_loss(outputs, final_output)
+#BackPropogation
+#Output layer error and gradient
+error_output=final_output - outputs
+gradient_output=error_output*sigmoid_derivative(final_output)
+#Hidden layer error and gradient
+error_hidden=np.dot(gradient_output, weights_hidden_output.T)
+gradient_hidden=error_hidden*sigmoid_derivative(hidden_output)
+#Update weights and biases
+weights_hidden_output -= learning_rate*np.dot(hidden_output.T, gradient_output)
+bias_output -= learning_rate*np.mean(gradient_output, axis=0)
+weights_input_hidden -= learning_rate*np.dot(inputs.T, gradient_hidden)
+bias_hidden -= learning_rate*np.mean(gradient_hidden,axis=0)
+if (epoch+1) % 1000 == 0:
+print(f"Epoch {epoch+1}: Loss = {loss:.6f}")
+#Compute the output for each input pair after training
+results =[]
+for input_pair in inputs:
+hidden_input=np.dot(input_pair, weights_input_hidden) + bias_hidden
+hidden_output=sigmoid(hidden_input)
+final_input = np.dot(hidden_output, weights_hidden_output) + bias_output
+final_output = sigmoid(final_input)
+results.append((input_pair, np.round(final_output[0],2)))
+results
+7/7/24, 9:58 PM Binary_Classification.ipynb - Colab
+https://colab.research.google.com/drive/1am5EhR1Na-yTTc3paci0bdSiDqOj_mLp#printMode=true 1/2
+Epoch 1000: Loss = 0.247665
+Epoch 2000: Loss = 0.230247
+Epoch 3000: Loss = 0.182979
+Epoch 4000: Loss = 0.141268
+Epoch 5000: Loss = 0.083919
+Epoch 6000: Loss = 0.040562
+Epoch 7000: Loss = 0.021949
+Epoch 8000: Loss = 0.013791
+Epoch 9000: Loss = 0.009632
+Epoch 10000: Loss = 0.007227
+[(array([0, 0]), 0.1),
+(array([0, 1]), 0.93),
+(array([1, 0]), 0.93),
+(array([1, 1]), 0.09)]
+7/7/24, 9:58 PM Binary_Classification.ipynb - Colab
+https://colab.research.google.com/drive/1am5EhR1Na-yTTc3paci0bdSiDqOj_mLp#printMode=true 2/2
