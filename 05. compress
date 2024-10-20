@@ -1,0 +1,64 @@
+image_path= "/content/color.jpg"
+import cv2
+from google.colab.patches import cv2_imshow
+image=cv2.imread(image_path)
+image
+#Save the image using lossless compression (PNG format)
+output_path = 'output_image.png'
+cv2.imwrite(output_path, image, [cv2.IMWRITE_PNG_COMPRESSION, 0])
+# Verify the saved image
+import matplotlib.pyplot as plt
+saved_image = cv2.imread(output_path)
+
+# Convert BGR to RGB for correct color display
+saved_image_rgb = cv2.cvtColor(saved_image, cv2.COLOR_BGR2RGB)
+
+# Display the saved image
+plt.imshow(saved_image_rgb)
+plt.title('Saved Image with Lossless Compression')
+plt.axis('off')
+plt.show()
+# Save the image using lossy compression (JPEG format)
+output_path = 'output_image.jpg'
+cv2.imwrite(output_path, image, [cv2.IMWRITE_JPEG_QUALITY, 90])
+# Verify the saved image
+import matplotlib.pyplot as plt
+saved_image = cv2.imread(output_path)
+
+# Convert BGR to RGB for correct color display
+saved_image_rgb = cv2.cvtColor(saved_image, cv2.COLOR_BGR2RGB)
+
+# Display the saved image
+plt.imshow(saved_image_rgb)
+plt.title('Saved Image with Lossy Compression')
+plt.axis('off')
+plt.show()
+import os
+
+#Compare file sizes
+original_size = os.path.getsize(image_path)
+lossless_size = os.path.getsize(output_path_lossless)
+lossy_size = os.path.getsize(output_path_lossy)
+
+print(f"Original Image Size: {original_size / 1024:.2f} KB")
+print(f"Lossless Compressed Image Size: {lossless_size / 1024:.2f} KB")
+print(f"Lossy Compressed Image Size: {lossy_size / 1024:.2f} KB")
+# Function to get image dimensions and file size
+def get_image_info(image_path):
+    # Read the image
+    image = cv2.imread(image_path)
+    # Get dimensions
+    height, width, channels = image.shape
+    # Get file size
+    file_size = os.path.getsize(image_path)
+    return width, height, channels, file_size
+
+# Get information for the original image
+original_info = get_image_info(image_path)
+
+# Get information for the compressed image
+compressed_info = get_image_info(output_path)
+
+# Display the information
+print(f"Original Image: Width={original_info[0]}, Height={original_info[1]}, Channels={original_info[2]}, File Size={original_info[3]} bytes")
+print(f"Compressed Image: Width={compressed_info[0]}, Height={compressed_info[1]}, Channels={compressed_info[2]}, File Size={compressed_info[3]} bytes")
