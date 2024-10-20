@@ -1,0 +1,93 @@
+image_path= "/content/mountain color.jfif"
+import cv2
+from google.colab.patches import cv2_imshow
+image= cv2.imread(image_path)
+image
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Apply Gaussian blur to reduce noise and improve edge detection
+blurred_image = cv2.GaussianBlur(image, (5, 5), 0)
+
+# Perform Canny edge detection
+edges = cv2.Canny(blurred_image, threshold1=100, threshold2=200)
+
+# Plot the original and edge-detected images
+plt.figure(figsize=(10, 5))
+# Original image
+plt.subplot(1, 2, 1)
+plt.imshow(image, cmap='gray')
+plt.title('Original Image')
+plt.axis('off')
+
+# Edge-detected image
+plt.subplot(1, 2, 2)
+plt.imshow(edges, cmap='gray')
+plt.title('Edge-detected Image')
+plt.axis('off')
+
+plt.show()
+# Read the image in grayscale
+image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+# Function to compute the 2D Discrete Cosine Transform (DCT) of an image
+def compute_dct(image):
+    # Convert image to float32 for DCT computation
+    image_float = np.float32(image) / 255.0
+    # Compute the DCT
+    dct = cv2.dct(image_float)
+    return dct
+
+# Compute the DCT of the image
+dct_image = compute_dct(image)
+
+# Function to normalize DCT image for visualization
+def normalize_dct_image(dct_image):
+    dct_image_log = np.log(np.abs(dct_image) + 1)
+    return cv2.normalize(dct_image_log, None, 0, 255, cv2.NORM_MINMAX)
+
+# Normalize the DCT image for visualization
+dct_image_normalized = normalize_dct_image(dct_image)
+# Plot the original and DCT images
+plt.figure(figsize=(10, 5))
+
+# Original image
+plt.subplot(1, 2, 1)
+plt.imshow(image, cmap='gray')
+plt.title('Original Image')
+plt.axis('off')
+
+# DCT image
+plt.subplot(1, 2, 2)
+plt.imshow(dct_image_normalized, cmap='gray')
+plt.title('DCT of Image')
+plt.axis('off')
+
+plt.show()
+image_path = "/content/face.jfif"
+
+# Read the image
+image = cv2.imread(image_path)
+image
+# Convert to grayscale for face detection
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Load the pre-trained Haar cascade classifier for face detection
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+# Detect faces in the image
+faces = face_cascade.detectMultiScale(image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+
+# Draw rectangles around detected faces
+for (x, y, w, h) in faces:
+    cv2.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
+
+# Convert the image from BGR to RGB for correct color display in Matplotlib
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+# Plot the original image with detected faces
+plt.figure(figsize=(10, 5))
+plt.imshow(image_rgb)
+plt.title('Detected Faces')
+plt.axis('off')
+plt.show()
